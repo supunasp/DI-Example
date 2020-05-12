@@ -2,14 +2,14 @@ package it.supunasp.di.consumer;
 
 import it.supunasp.di.annotate.AutoWired;
 import it.supunasp.di.model.PaymentRequest;
-import it.supunasp.di.service.CashPaymentServiceImpl;
+import it.supunasp.di.service.CCPaymentServiceImpl;
 
 import java.util.List;
 
-public class CashPaymentSite implements WebSite {
+public class HybridPaymentSite extends CashPaymentSite {
 
     @AutoWired
-    protected CashPaymentServiceImpl service;
+    private CCPaymentServiceImpl service;
 
     @Override
     public boolean takePayment(PaymentRequest paymentRequest) {
@@ -19,6 +19,15 @@ public class CashPaymentSite implements WebSite {
     @Override
     public List<String> getProcessedPayments() {
         return service.getProcessedPayments();
+    }
+
+
+    public boolean takeCashPayment(PaymentRequest paymentRequest) {
+        return super.service != null && super.service.confirmPayment(paymentRequest);
+    }
+
+    public List<String> getCashProcessedPayments() {
+        return super.service.getProcessedPayments();
     }
 
 }

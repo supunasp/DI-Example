@@ -2,6 +2,7 @@ package it.supunasp.di;
 
 import it.supunasp.di.consumer.CCPaymentSite;
 import it.supunasp.di.consumer.CashPaymentSite;
+import it.supunasp.di.consumer.HybridPaymentSite;
 import it.supunasp.di.consumer.WebSite;
 import it.supunasp.di.injector.AutoWiredInjector;
 import it.supunasp.di.model.PaymentRequest;
@@ -31,13 +32,13 @@ public class MyWebSiteTest {
 
 
         success = paymentSite.takePayment(cashPaymentRequest);
-        System.out.println("processed=" + success + " accounts : " + paymentSite.getProcessedPayments().size());
+        System.out.println("[Cash] processed=" + success + " accounts : " + paymentSite.getProcessedPayments().size());
 
         paymentSite = new CashPaymentSite();
         autoWiredInjector.injectBeans(paymentSite);
 
         success = paymentSite.takePayment(cashPaymentRequestTwo);
-        System.out.println("processed=" + success + " accounts : " + paymentSite.getProcessedPayments().size());
+        System.out.println("[Cash]processed=" + success + " accounts : " + paymentSite.getProcessedPayments().size());
 
         /*
             credit card based website [Prototype Scope]
@@ -48,12 +49,43 @@ public class MyWebSiteTest {
         autoWiredInjector.injectBeans(paymentSite);
 
         success = paymentSite.takePayment(creditCardPaymentRequest);
-        System.out.println("processed=" + success + " credit cards : " + paymentSite.getProcessedPayments().size());
+        System.out.println("[CC] processed=" + success + " credit cards : " + paymentSite.getProcessedPayments().size());
 
         paymentSite = new CCPaymentSite();
         autoWiredInjector.injectBeans(paymentSite);
 
         success = paymentSite.takePayment(creditCardPaymentRequestTwo);
-        System.out.println("processed=" + success + " credit cards : " + paymentSite.getProcessedPayments().size());
+        System.out.println("[CC] processed=" + success + " credit cards : " + paymentSite.getProcessedPayments().size());
+
+
+        /*
+            credit card and cash based website [Prototype Scope and singleton]
+         */
+
+        HybridPaymentSite hybridPaymentSite = new HybridPaymentSite();
+        autoWiredInjector.injectBeans(hybridPaymentSite);
+
+
+        success = hybridPaymentSite.takeCashPayment(cashPaymentRequest);
+        System.out.println("[Hybrid] processed=" + success + " accounts : " + hybridPaymentSite.getCashProcessedPayments().size());
+
+        hybridPaymentSite = new HybridPaymentSite();
+        autoWiredInjector.injectBeans(hybridPaymentSite);
+
+        success = hybridPaymentSite.takeCashPayment(cashPaymentRequestTwo);
+        System.out.println("[Hybrid] processed=" + success + " accounts : " + hybridPaymentSite.getCashProcessedPayments().size());
+
+
+        hybridPaymentSite = new HybridPaymentSite();
+        autoWiredInjector.injectBeans(hybridPaymentSite);
+
+        success = hybridPaymentSite.takePayment(creditCardPaymentRequest);
+        System.out.println("[Hybrid] processed=" + success + " credit cards : " + hybridPaymentSite.getProcessedPayments().size());
+
+        hybridPaymentSite = new HybridPaymentSite();
+        autoWiredInjector.injectBeans(hybridPaymentSite);
+
+        success = hybridPaymentSite.takePayment(creditCardPaymentRequestTwo);
+        System.out.println("[Hybrid] processed=" + success + " credit cards : " + hybridPaymentSite.getProcessedPayments().size());
     }
 }
