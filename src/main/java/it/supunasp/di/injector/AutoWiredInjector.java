@@ -20,6 +20,11 @@ public class AutoWiredInjector {
 
         Class<?> objectClass = object.getClass();
 
+        initializeFields(object, objectClass);
+    }
+
+    private void initializeFields(Object object, Class<?> objectClass) throws IllegalAccessException, InstantiationException {
+
         for (Field declaredField : objectClass.getDeclaredFields()) {
             declaredField.setAccessible(true);
             if (declaredField.isAnnotationPresent(AutoWired.class)) {
@@ -45,6 +50,9 @@ public class AutoWiredInjector {
                 }
                 declaredField.setAccessible(accessible);
             }
+        }
+        if (objectClass.getSuperclass() != null) {
+            initializeFields(object, objectClass.getSuperclass());
         }
     }
 
