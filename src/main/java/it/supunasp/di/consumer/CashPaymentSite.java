@@ -1,17 +1,15 @@
 package it.supunasp.di.consumer;
 
+import it.supunasp.di.annotate.AutoWired;
 import it.supunasp.di.model.PaymentRequest;
-import it.supunasp.di.service.PaymentService;
+import it.supunasp.di.service.CashPaymentServiceImpl;
 
 import java.util.List;
 
-public class ECommerceSite implements WebSite {
+public class CashPaymentSite implements WebSite {
 
-    private PaymentService service;
-
-    public ECommerceSite(PaymentService svc) {
-        this.service = svc;
-    }
+    @AutoWired
+    private CashPaymentServiceImpl service;
 
     @Override
     public boolean takePayment(PaymentRequest paymentRequest) {

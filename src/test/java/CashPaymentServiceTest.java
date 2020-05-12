@@ -1,6 +1,6 @@
+import it.supunasp.di.consumer.CashPaymentSite;
 import it.supunasp.di.consumer.WebSite;
-import it.supunasp.di.injector.CashPaymentServiceInjector;
-import it.supunasp.di.injector.PaymentServiceInjector;
+import it.supunasp.di.injector.AutoWiredInjector;
 import it.supunasp.di.model.PaymentRequest;
 import it.supunasp.di.service.CashPaymentServiceImpl;
 import it.supunasp.di.service.PaymentService;
@@ -15,41 +15,47 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class CashPaymentServiceTest {
 
-    private PaymentServiceInjector injector;
+    AutoWiredInjector autoWiredInjector;
+    private WebSite webSite;
     private PaymentService mockedPaymentService;
 
 
     @Before
-    public void init() {
+    public void init() throws InstantiationException, IllegalAccessException {
 
-        injector = Mockito.spy(new CashPaymentServiceInjector());
+        autoWiredInjector = Mockito.spy(new AutoWiredInjector());
         mockedPaymentService = Mockito.spy(new CashPaymentServiceImpl());
 
         /*
             mock CashPaymentServiceImpl to avoid any outside transactions
          */
-        Mockito.doReturn(mockedPaymentService).when(injector).getPaymentServiceInstance();
+        Mockito.doReturn(mockedPaymentService).when(autoWiredInjector).getInstanceOfClass(CashPaymentServiceImpl.class);
 
     }
 
+    private WebSite getWebSite() throws Exception {
+        WebSite webSite = new CashPaymentSite();
+        autoWiredInjector.injectBeans(webSite);
+        return webSite;
+    }
 
     @Test
-    public void testSuccessPayment() {
+    public void testSuccessPayment() throws Exception {
 
         /*
          * when to avoid real business logic
          */
         Mockito.doReturn(true).when(mockedPaymentService).processPayment(Mockito.any(PaymentRequest.class));
+        webSite = getWebSite();
 
         PaymentRequest cashPaymentRequest = new PaymentRequest("110100000", 100.0);
-        WebSite app = injector.getWebSite();
-        boolean success = app.takePayment(cashPaymentRequest);
+        boolean success = webSite.takePayment(cashPaymentRequest);
 
         Assert.assertTrue(success);
     }
 
     @Test
-    public void testFailedPayment() {
+    public void testFailedPayment() throws Exception {
 
         /*
          * when to avoid real business logic
@@ -58,15 +64,17 @@ public class CashPaymentServiceTest {
 
 
         PaymentRequest cashPaymentRequest = new PaymentRequest("110100000", 100.0);
-        WebSite app = injector.getWebSite();
-        boolean success = app.takePayment(cashPaymentRequest);
+        webSite = getWebSite();
+        boolean success = webSite.takePayment(cashPaymentRequest);
 
         Assert.assertFalse(success);
     }
 
     @After
     public void tear() {
-        injector = null;
+        autoWiredInjector = null;
+        webSite = null;
+        mockedPaymentService = null;
     }
 
 }

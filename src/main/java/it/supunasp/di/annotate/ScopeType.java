@@ -1,4 +1,4 @@
-package it.supunasp.di.scope;
+package it.supunasp.di.annotate;
 
 public enum ScopeType {
     /**

@@ -1,8 +1,8 @@
 package it.supunasp.di.service;
 
 import it.supunasp.di.model.PaymentRequest;
-import it.supunasp.di.scope.ScopeType;
-import it.supunasp.di.scope.ServiceScope;
+import it.supunasp.di.annotate.ScopeType;
+import it.supunasp.di.annotate.ServiceScope;
 
 import java.util.ArrayList;
 import java.util.List;
